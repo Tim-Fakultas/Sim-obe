@@ -1,27 +1,24 @@
+"use client";
+
 import {
-  Calendar,
   Home,
-  Inbox,
-  Search,
-  Settings,
   ClipboardList,
   WalletCards,
   Map,
   BookOpen,
   Database,
+  ChevronDown,
 } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
 import {
@@ -30,8 +27,9 @@ import {
   CollapsibleContent,
 } from "@/components/ui/collapsible";
 
-import { ChevronDown } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 // Menu items.
 const items = [
@@ -98,64 +96,119 @@ const features = [
 ];
 
 export function AppSidebar() {
+  const pathname = usePathname();
+
   return (
     <div className="mt-4">
-    <Sidebar>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
-          <SidebarMenu>
-            {items.map((item, i) => (
-              <SidebarMenuItem>
-                <SidebarMenuButton>
-                  {item.icon && <item.icon className="mr-2 h-4 w-4" />}
-                  <Link href={item.url}>{item.title}</Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+      <Sidebar>
+        {/* Logo / Gambar */}
+        <div className="flex justify-center p-4">
+          <Image
+            src="/main.png"
+            alt="Logo"
+            width={300}
+            height={300}
+            className="rounded-full"
+          />
+        </div>
 
-        {/* Feature */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Feature</SidebarGroupLabel>
-          <SidebarMenu>
-            {features.map((feature, i) => (
-              <Collapsible key={i} className="group/collapsible">
-                <SidebarMenuItem>
-                  {/* Trigger / main sidebar item */}
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton>
-                      {feature.icon && (
-                        <feature.icon className="mr-2 h-4 w-4" />
-                      )}
-                      <span className="flex-1">{feature.title}</span>
-                      {feature.children && (
-                        <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180"></ChevronDown>
-                      )}
+        <SidebarContent>
+          {/* Dashboard */}
+          <SidebarGroup>
+            <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
+            <SidebarMenu>
+              {items.map((item) => {
+                const isActive = pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.url}>
+                    <SidebarMenuButton
+                      asChild
+                      className={
+                        isActive
+                          ? "bg-blue-500 text-white"
+                          : "hover:bg-blue-100"
+                      }
+                    >
+                      <Link href={item.url} className="flex items-center gap-2">
+                        {item.icon && <item.icon className="h-4 w-4" />}
+                        {item.title}
+                      </Link>
                     </SidebarMenuButton>
-                  </CollapsibleTrigger>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroup>
 
-                  {feature.children && (
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {feature.children.map((sub, j) => (
-                          <SidebarMenuItem key={j}>
-                            <SidebarMenuButton asChild>
-                              <Link href={sub.url}>{sub.title}</Link>
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  )}
-                </SidebarMenuItem>
-              </Collapsible>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+          {/* Feature */}
+          <SidebarGroup>
+            <SidebarGroupLabel>Feature</SidebarGroupLabel>
+            <SidebarMenu>
+              {features.map((feature) => {
+                const isGroupActive = feature.children?.some((sub) =>
+                  pathname.startsWith(sub.url)
+                );
+                const isSingleActive = feature.url === pathname;
+
+                return (
+                  <Collapsible
+                    key={feature.title}
+                    className="group/collapsible"
+                    defaultOpen={isGroupActive}
+                  >
+                    <SidebarMenuItem>
+                      {/* Trigger / main sidebar item */}
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton
+                          className={
+                            isGroupActive || isSingleActive
+                              ? "bg-blue-500 text-white"
+                              : "hover:bg-blue-100"
+                          }
+                        >
+                          {feature.icon && (
+                            <feature.icon className="mr-2 h-4 w-4" />
+                          )}
+                          <span className="flex-1">{feature.title}</span>
+                          {feature.children && (
+                            <ChevronDown className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                          )}
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+
+                      {/* Submenu */}
+                      {feature.children && (
+                        <CollapsibleContent>
+                          <SidebarMenuSub>
+                            {feature.children.map((sub) => {
+                              const isActive = pathname === sub.url;
+                              return (
+                                <SidebarMenuItem key={sub.url}>
+                                  <SidebarMenuButton
+                                    asChild
+                                    className={
+                                      isActive
+                                        ? "bg-blue-500 text-white"
+                                        : "hover:bg-blue-100"
+                                    }
+                                  >
+                                    <Link href={sub.url}>{sub.title}</Link>
+                                  </SidebarMenuButton>
+                                </SidebarMenuItem>
+                              );
+                            })}
+                          </SidebarMenuSub>
+                        </CollapsibleContent>
+                      )}
+                    </SidebarMenuItem>
+                  </Collapsible>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
     </div>
   );
 }
+export default AppSidebar;

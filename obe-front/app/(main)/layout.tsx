@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,9 +28,13 @@ export default function DashboardLayout({
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main>
+      <main className="flex flex-col w-full">
+        {/* Navbar */}
         <SidebarTrigger />
-        {children}
+        <Navbar />
+
+        {/* Konten halaman */}
+        <div className="p-4">{children}</div>
       </main>
     </SidebarProvider>
   );
