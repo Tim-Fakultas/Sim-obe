@@ -99,6 +99,7 @@ const features = [
 
 export function AppSidebar() {
   return (
+    <div className="mt-4">
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
@@ -155,5 +156,6 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
+    </div>
   );
 }
