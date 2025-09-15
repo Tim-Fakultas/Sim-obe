@@ -1,5 +1,7 @@
+import RoleTable from "@/components/RoleTable";
+
 const Role = () => {
-  return <div>Role</div>;
+  return <RoleTable />;
 };
 
 export default Role;

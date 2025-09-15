@@ -1,5 +1,5 @@
-const User = () => {
-  return <div>User</div>;
-};
+import UserTable from "@/components/UserTable";
 
-export default User;
+export default function UserPage() {
+  return <UserTable apiUrl="http://localhost:8000/api" />;
+}
